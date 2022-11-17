@@ -1,0 +1,38 @@
+// ==UserScript==
+// @name         Calculo Horas
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Calcula horas y ganancia
+// @author       Santiago Recoba
+// @match        https://apps.moyal.com.uy/GestionProyectos/servlet/gpgt_registrohoras_registro
+// @icon         https://www.google.com/s2/favicons?domain=moyal.com.uy
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+const mes = document.querySelector("#vFMESACTIVIDAD")
+
+mes.addEventListener("change", function(){  document.querySelector("#TEXTBLOCK3").textContent = 'Cargando...'; })
+
+    setInterval(function(){
+
+const lines = document.getElementsByClassName('GridOdd')
+var suma = 0
+var sumaextras = 0
+const hora = 171.969697
+if(lines.length>1){
+for (i=0;i<lines.length;i++){
+var trabajado = parseFloat(lines[i].getElementsByTagName('td')[7].innerText.replaceAll(',','.'));
+var extra = (trabajado-6)*2
+sumaextras+=extra/2
+suma = suma + hora*(trabajado+extra)
+}
+suma = Math.ceil(suma)
+document.querySelector("#TEXTBLOCK3").textContent = "Ganado hasta ahora: $" + suma + "  ||  Horas extra: " + sumaextras + ' ($'+ Math.ceil(hora*(sumaextras*2)) +')'
+   }
+    else {
+        document.querySelector("#TEXTBLOCK3").textContent = 'Sin Horas'
+    }
+    }, 2000);
+})();
